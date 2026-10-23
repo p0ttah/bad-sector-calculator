@@ -1,0 +1,178 @@
+BAD SECTOR CALCULATOR - HOW TO EDIT IT
+======================================
+Written for v1.2. A plain-English map of the program so you can change it
+yourself. README.txt (in the app's folder) is the guide for people who just
+use it.
+
+
+1. WHAT EACH FILE DOES
+----------------------
+Bad Sector Calculator\              <- the folder you copy to the Desktop
+ |
+ |-- Bad Sector Calculator.exe     The launcher. All it does is start the
+ |                                 program below, using the Python in
+ |                                 app\runtime. You never need to edit it.
+ |-- README.txt                    How to use the app.
+ |
+ '-- app\
+      |-- bad_sector_calculator.pyw    THE PROGRAM. Every rule, message,
+      |                                colour and the version number are in
+      |                                this one text file. It's the only file
+      |                                you normally edit.
+      |-- icon.ico, icon.png           The window icon. Swap in your own
+      |                                (same names) to change it.
+      '-- runtime\                     A complete portable copy of Python
+                                       3.12, so nothing needs installing.
+                                       Don't touch.
+
+This editing kit (keep it apart from the copy you use for casework):
+      HOW TO EDIT.txt    this guide
+      tests\             automatic checks and test logs - see section 6
+      launcher\          source code of the .exe, only needed to rebuild it
+
+How it starts: double-clicking the .exe runs
+      app\runtime\pythonw.exe  app\bad_sector_calculator.pyw
+and the window opens. The .exe looks for those exact names, so don't rename
+the "app" or "runtime" folders or the .pyw file. Renaming the .exe or the
+outer folder is fine.
+
+
+2. BEFORE YOU EDIT
+------------------
+- Work on a COPY of the folder, never the one you use for casework.
+- Open the .pyw in Notepad++ or VS Code (both free). Plain Notepad is fine for
+  small changes like the version number.
+- Python groups lines by their indentation: 4 spaces per level, never tabs.
+  When you add a line, copy the indentation of the line above it.
+- Keep text inside its quote marks, e.g.  APP_VERSION = "1.2"
+
+
+3. CHANGE THE VERSION NUMBER
+----------------------------
+1. Open app\bad_sector_calculator.pyw. Line 37 says:
+       APP_VERSION = "1.2"
+   Change the number, e.g.  APP_VERSION = "1.3"
+   That one line updates the title bar, the tag next to the name, saved
+   reports and the --version check.
+2. Optional tidy-ups: line 4 of the .pyw, and the first line of README.txt.
+3. Save, double-click the .exe and check the title shows the new number.
+4. Record the new hash of the .pyw (section 7).
+
+
+4. HOW THE .pyw IS LAID OUT
+---------------------------
+It's split into sections with headings like this:
+      # ==========================
+      #  Parsing
+      # ==========================
+From top to bottom:
+
+  Settings          APP_VERSION, FIRST_REGION (2048), DEFAULT_SECTOR_SIZE
+                    (512), BANDS (the chunk-size rows), MAX_LOG_BYTES (the
+                    largest file it will open).
+
+  Reading log       Opens the file, works out how the text is stored, and
+  files             refuses empty, non-text or huge files.
+
+  Parsing           Reads the bad-sector list. The safety rules live here:
+                      detect_tool          FTK, TX1 or neither?
+                      FTK_START, FTK_END   the wording that opens and closes
+                                           FTK's list
+                      _ftk_ranges          reads an FTK list
+                      _parse_row           what a TX1 list line may look like
+                      _tableau_ranges      reads a TX1 list
+                      _check_order         the list must run forwards
+                      _check_layout        every line must be laid out alike
+                      _check_leftovers     nothing about bad sectors is left
+                                           unread
+                      parse_log            puts it all together and decides
+                                           the red errors and yellow warnings
+
+  Analysis          analyse() joins touching ranges into chunks, counts the
+                    chunk-size bands and does the first-2048 check.
+
+  Formatting and    MB / GB / % formatting, the saved report and the
+  the text report   "couldn't calculate" message.
+
+  Window            P = the colours. App = everything on screen: the four
+                    boxes, the tables, the buttons, the two-number question,
+                    Copy results and Save report.
+
+  Start-up          What happens on double-click, plus --report and --version.
+
+
+5. COMMON CHANGES - WHERE TO LOOK
+---------------------------------
+  Chunk-size rows   BANDS near the top. Each row is
+                        ("label", smallest, largest),
+                    with None as the largest for "no upper limit". The table
+                    and the report follow automatically.
+
+  The 2048 check    FIRST_REGION = 2048, then search for "2048" to update the
+                    wording on screen.
+
+  Colours           The  P = {  list under "Window". Colours are hex codes,
+                    e.g. "#14304D" is the dark blue header.
+
+  Text size / font  self.F = {  inside App, e.g.  "title": (fam, 16, "bold")
+
+  Window size       root.geometry(...) and root.minsize(...) inside App.
+
+  Any wording       Search the .pyw for a few words of it and change the text
+                    between the quote marks.
+
+  New FTK wording   If a future FTK words its list differently, the app will
+                    refuse those logs (it never guesses). Update FTK_START /
+                    FTK_END to match.
+
+  Changing the reading rules (the Parsing section) is the one area to be
+  careful with - always run the checks in section 6 afterwards.
+
+
+6. CHECK YOUR EDIT
+------------------
+Open a command window in the folder: click the folder's address bar in File
+Explorer, type  cmd  and press Enter. Then:
+
+  Does it start?    If double-clicking the .exe does nothing, there's a typo.
+                    To see it, run:
+                        app\runtime\python.exe app\bad_sector_calculator.pyw
+                    The error message gives the line number.
+
+  Version           app\runtime\python.exe app\bad_sector_calculator.pyw --version
+
+  Full checks       Copy the kit's tests folder next to the app folder, then:
+                        app\runtime\python.exe tests\test_calculator.py
+                    It must end with "All checks passed."
+                    The checks follow your settings (version, bands, 2048),
+                    so changing those won't break them.
+
+  Damage test       Optional, takes a few minutes:
+                        app\runtime\python.exe tests\fuzz_logs.py app\bad_sector_calculator.pyw 2000
+                    It must end with "RESULT: no wrong figures".
+
+  By eye            Open the logs in tests\logs. The 10,000-sector test log
+                    should show 4.88 MB, 10,000, 0.0010% and YES (17). Both
+                    DAMAGED logs must show the red message and no figures.
+
+
+7. SHARE A NEW VERSION
+----------------------
+1. Change APP_VERSION (section 3) and run the checks (section 6).
+2. Delete the tests folder from the copy you're going to share.
+3. Right-click the folder > Compress to ZIP file
+   (Windows 10: Send to > Compressed (zipped) folder).
+4. Record the hashes. In a command window type
+       certutil -hashfile
+   then a space, drag the file onto the window, type  SHA1  and press Enter.
+   Do it for app\bad_sector_calculator.pyw and the zip.
+   The .exe hash is the same in every version - the .pyw hash is the one that
+   identifies the version.
+5. Tell people to delete their old folder before unzipping the new one.
+
+
+8. LEAVE THESE ALONE
+--------------------
+  app\runtime\   Python itself. It doesn't need updating.
+  The .exe       Only needs rebuilding to change the .exe's own icon or what
+                 it runs - see launcher\BUILD.txt (needs a C compiler).

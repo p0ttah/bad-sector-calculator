@@ -1,0 +1,21 @@
+BUILDING THE LAUNCHER (.exe)
+============================
+You only need this to change the .exe's own icon or what it runs. For any
+change to the program itself, edit app\bad_sector_calculator.pyw instead.
+
+What's here
+  launcher.c          The launcher: finds app\runtime\pythonw.exe and
+                      app\bad_sector_calculator.pyw next to itself and runs
+                      them, passing on any file dropped onto the .exe.
+  launcher.rc         Adds the icon and the .exe's own version details (1.0 -
+                      separate from the app's version number).
+  launcher.manifest   Tells Windows it doesn't need admin rights.
+  icon.ico            The .exe's icon. Replace it to change the icon.
+
+To rebuild
+  1. Install MSYS2 (https://www.msys2.org), open its "MINGW64" window and run
+         pacman -S mingw-w64-x86_64-gcc
+  2. In that window, go to this folder and run:
+         windres launcher.rc -O coff -o launcher.res
+         gcc -municode -mwindows -O2 -s -static launcher.c launcher.res -o "Bad Sector Calculator.exe"
+  3. Copy the new .exe into the main folder, test it, and record its SHA-1.

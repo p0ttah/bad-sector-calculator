@@ -1,0 +1,28 @@
+#include <winver.h>
+
+1 ICON "icon.ico"
+1 24 "launcher.manifest"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_APP
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904B0"
+    BEGIN
+      VALUE "FileDescription", "Bad Sector Calculator"
+      VALUE "ProductName", "Bad Sector Calculator"
+      VALUE "FileVersion", "1.0.0.0"
+      VALUE "ProductVersion", "1.0.0.0"
+      VALUE "OriginalFilename", "Bad Sector Calculator.exe"
+      VALUE "InternalName", "BadSectorCalculator"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0809, 1200
+  END
+END

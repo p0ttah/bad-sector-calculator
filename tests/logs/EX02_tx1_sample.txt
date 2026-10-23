@@ -1,0 +1,48 @@
+Tableau TX1 Forensic Imager
+Log File
+Job ID: 31
+Task: Disk to File
+Status: Ok
+User: Test
+Case ID: 24-0001
+Case Notes: Laptop HDD
+Start time: Mon Oct 19 09:10:02 2026
+End time: Mon Oct 19 13:02:44 2026
+
+Source Disk:
+  Interface: SATA
+  Model: WDC WD5000AAKX-00ERMA0
+  Serial number: TEST-SERIAL-0002
+  Capacity in Bytes: 500,107,862,016 (500.1 GB)
+  Block Size: 512 bytes
+  Block Count: 976,773,168
+  Power-ON Block Count: 976,773,168
+  HPA Block Count: 976,773,168 (HPA In Use: No)
+  DCO Block Count: 976,773,168 (DCO In Use: No)
+
+Destination Disk:
+  Interface: USB
+  Model: Samsung T7
+  Serial number: TEST-SERIAL-0003
+  Capacity in Bytes: 1,000,204,886,016 (1.0 TB)
+  Block Size: 512 bytes
+  Block Count: 1,953,525,168
+
+Settings:
+  Error Granularity: Standard (32 KiB, 64 sectors)
+  Error Retry: 3
+  Hash: MD5, SHA-1
+
+Results:
+  Total recoverable errors: 3
+  Total unrecoverable errors: 4
+  MD5: 0b7d0f1a2c3e4d5f6a7b8c9d0e1f2a3b
+  SHA-1: 1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b
+
+Unreadable Sectors:
+   Sector Address    Sector Length
+   0                 64
+   2048              64
+   140591424         64
+   140591488         64
+   500000000         1
